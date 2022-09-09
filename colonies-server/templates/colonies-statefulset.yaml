@@ -40,9 +40,6 @@ spec:
          envFrom:
            - configMapRef:
                name: colonies-config
-         volumeMounts:
-           - name: etcd-data
-             mountPath: /var/run/etcd
          resources:
           limits:
             cpu: {{ (.Values.ColoniesServerCPU | quote) }}
@@ -60,15 +57,6 @@ spec:
                 PEERS="${PEERS}${PEERS:+,}colonies-server-${i}=colonies-server-${i}.colonies-internal:2380:2381:80"
              done
              exec colonies server start --etcdname ${HOSTNAME} --etcdhost ${HOSTNAME} --etcdclientport 2379 --etcdpeerport 2380 --initial-cluster ${PEERS} --etcddatadir /var/run/etcd
-  volumeClaimTemplates: 
-    - metadata:
-        name: etcd-data
-      spec:
-        accessModes: [ "ReadWriteOnce" ]
-        storageClassName: {{ (.Values.StorageClassName) }}
-        resources:
-          requests:
-            storage: 1Gi
 
 
 
